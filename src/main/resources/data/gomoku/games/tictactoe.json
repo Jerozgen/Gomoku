@@ -1,0 +1,21 @@
+{
+  "type": "gomoku:gomoku",
+  "icon": "minecraft:lodestone",
+  "description": [
+    {"translate": "game.gomoku.tictactoe.desc1"},
+    {"translate": "game.gomoku.tictactoe.desc2"}
+  ],
+  "players": {
+    "min": 2,
+    "max": 2
+  },
+  "board": {
+    "width": 3,
+    "height": 3,
+    "win": {
+      "size": 3
+    }
+  },
+  "move_duration": 60,
+  "statistic_bundle": "tictactoe"
+}

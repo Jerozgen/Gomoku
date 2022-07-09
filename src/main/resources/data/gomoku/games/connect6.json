@@ -1,0 +1,28 @@
+{
+  "type": "gomoku:gomoku",
+  "icon": "minecraft:lodestone",
+  "description": [
+    {"translate": "game.gomoku.connect6.desc1"},
+    {"translate": "game.gomoku.connect6.desc2"}
+  ],
+  "players": {
+    "min": 2,
+    "max": 32,
+    "threshold": 2,
+    "countdown": {
+      "ready_seconds": 10
+    }
+  },
+  "board": {
+    "width": 19,
+    "height": 19,
+    "win": {
+      "size": 6,
+      "exact": false
+    }
+  },
+  "first_move_places": 1,
+  "each_move_places": 2,
+  "move_duration": 120,
+  "statistic_bundle": "connect6"
+}

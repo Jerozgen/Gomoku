@@ -1,0 +1,44 @@
+{
+  "gameType.gomoku.gomoku": "Gomoku",
+
+  "game.gomoku.gomoku": "Gomoku",
+  "game.gomoku.gomoku_19x19": "Gomoku (19x19)",
+  "game.gomoku.gomoku_23x23": "Gomoku (23x23)",
+  "game.gomoku.gomoku_37x37": "Gomoku (37x37)",
+  "game.gomoku.gomoku4": "Four-in-a-Row Gomoku",
+  "game.gomoku.connect6": "Connect6",
+  "game.gomoku.connect6_37x37": "Connect6 (37x37)",
+  "game.gomoku.tictactoe": "Tic-tac-toe",
+
+  "game.gomoku.gomoku.desc1": "Form an unbroken chain",
+  "game.gomoku.gomoku.desc2": "of five blocks to win!",
+  "game.gomoku.gomoku4.desc1": "Form an unbroken chain",
+  "game.gomoku.gomoku4.desc2": "of four blocks to win!",
+  "game.gomoku.connect6.desc1": "Form an unbroken chain",
+  "game.gomoku.connect6.desc2": "of six blocks to win!",
+  "game.gomoku.tictactoe.desc1": "Form an unbroken chain",
+  "game.gomoku.tictactoe.desc2": "of three blocks to win!",
+
+  "statistic.bundle.gomoku": "Gomoku",
+  "statistic.bundle.gomoku4": "Four-in-a-Row Gomoku",
+  "statistic.bundle.connect6": "Connect6",
+  "statistic.bundle.tictactoe": "Tic-tac-toe",
+
+  "statistic.gomoku.time_elapsed": "Time Elapsed",
+  "statistic.gomoku.players": "Players",
+  "statistic.gomoku.time_spent": "Time Spent",
+  "statistic.gomoku.games_with_a_draw": "Games with a Draw",
+  "statistic.gomoku.blocks_placed": "Blocks Placed",
+
+  "text.gomoku.desc": "Form an unbroken chain of five blocks to win!",
+  "text.gomoku.desc.custom_chain": "Form an unbroken chain of %d blocks to win!",
+  "text.gomoku.desc.controls.swap": "%s on a player - request swapping",
+  "text.gomoku.combined_keybind": "%s + %s",
+  "text.gomoku.swap.request.to_executor": "Sent a swap request to %s",
+  "text.gomoku.swap.request.to_target": "%1$s requests swapping. Use %2$s on %1$s to accept.",
+  "text.gomoku.swap.success": "%s and %s swapped!",
+  "text.gomoku.time_is_over": "%s's move time is over!",
+  "text.gomoku.end.winner": "%s won the game!",
+  "text.gomoku.end.no_winner": "Draw!",
+  "text.gomoku.error.finished": "This game has been finished!"
+}

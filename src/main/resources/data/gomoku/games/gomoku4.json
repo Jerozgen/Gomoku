@@ -1,0 +1,25 @@
+{
+  "type": "gomoku:gomoku",
+  "icon": "minecraft:lodestone",
+  "description": [
+    {"translate": "game.gomoku.gomoku4.desc1"},
+    {"translate": "game.gomoku.gomoku4.desc2"}
+  ],
+  "players": {
+    "min": 3,
+    "max": 32,
+    "threshold": 3,
+    "countdown": {
+      "ready_seconds": 10
+    }
+  },
+  "board": {
+    "width": 23,
+    "height": 23,
+    "win": {
+      "size": 4,
+      "exact": false
+    }
+  },
+  "statistic_bundle": "gomoku4"
+}
