@@ -75,7 +75,6 @@ public class GomokuActivePhase extends GomokuPhase {
         queue.addAll(players);
         currentMovePlaces = game.config().firstMovePlaces();
         startTime = Util.getMeasuringTimeMs();
-        game.stat(statistics -> statistics.global().set(GomokuStatisticKeys.PLAYERS, players.size()));
         startTurn(currentPlayer());
     }
 

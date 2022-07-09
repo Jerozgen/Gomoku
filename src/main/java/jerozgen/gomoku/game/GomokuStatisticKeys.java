@@ -7,7 +7,6 @@ import xyz.nucleoid.plasmid.game.stats.StatisticKey;
 public final class GomokuStatisticKeys {
     // global
     public static final StatisticKey<Float> TIME_ELAPSED = StatisticKey.floatKey(id("time_elapsed"));
-    public static final StatisticKey<Integer> PLAYERS = StatisticKey.intKey(id("players")).hidden(true);
 
     // per-player
     public static final StatisticKey<Float> TIME_SPENT = StatisticKey.floatKey(id("time_spent"));
