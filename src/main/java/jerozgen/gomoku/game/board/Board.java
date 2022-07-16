@@ -2,7 +2,6 @@ package jerozgen.gomoku.game.board;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -81,14 +80,14 @@ public class Board {
     }
 
     public Text raycastText(HitResult hit) {
-        if (hit.getType() != HitResult.Type.BLOCK) return LiteralText.EMPTY;
+        if (hit.getType() != HitResult.Type.BLOCK) return Text.empty();
 
         var pos = ((BlockHitResult) hit).getBlockPos();
-        if (pos.getY() != 0) return LiteralText.EMPTY;
+        if (pos.getY() != 0) return Text.empty();
 
         var block = block(pos.getX(), pos.getZ());
-        if (block == null) return LiteralText.EMPTY;
-        if (block.equals(DEFAULT_BLOCK)) return LiteralText.EMPTY;
+        if (block == null) return Text.empty();
+        if (block.equals(DEFAULT_BLOCK)) return Text.empty();
 
         return block.getName();
     }
