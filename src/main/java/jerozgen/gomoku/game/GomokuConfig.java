@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import jerozgen.gomoku.game.board.BoardConfig;
 import net.minecraft.block.Block;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.dynamic.Codecs;
-import net.minecraft.util.registry.Registry;
 import xyz.nucleoid.plasmid.game.common.config.PlayerConfig;
 import xyz.nucleoid.plasmid.game.stats.GameStatisticBundle;
 
@@ -20,7 +20,7 @@ public record GomokuConfig(PlayerConfig playerConfig, BoardConfig boardConfig, L
     public static final Codec<GomokuConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             PlayerConfig.CODEC.fieldOf("players").forGetter(GomokuConfig::playerConfig),
             BoardConfig.CODEC.fieldOf("board").forGetter(GomokuConfig::boardConfig),
-            Registry.BLOCK.getCodec().listOf().listOf().fieldOf("blocks").orElseGet(GomokuConfig::defaultBlocks).forGetter(GomokuConfig::blocks),
+            Registries.BLOCK.getCodec().listOf().listOf().fieldOf("blocks").orElseGet(GomokuConfig::defaultBlocks).forGetter(GomokuConfig::blocks),
             Codecs.POSITIVE_INT.optionalFieldOf("first_move_places", 1).forGetter(GomokuConfig::firstMovePlaces),
             Codecs.POSITIVE_INT.optionalFieldOf("each_move_places", 1).forGetter(GomokuConfig::eachMovePlaces),
             Codecs.POSITIVE_INT.optionalFieldOf("move_duration", 90).forGetter(GomokuConfig::eachMovePlaces),
