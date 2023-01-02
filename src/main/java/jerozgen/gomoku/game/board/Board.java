@@ -2,21 +2,24 @@ package jerozgen.gomoku.game.board;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.text.LiteralText;
+import net.minecraft.block.PillarBlock;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.map_templates.MapTemplate;
 
+import java.util.List;
 import java.util.function.IntUnaryOperator;
 
 
 public class Board {
     private static final Block DEFAULT_BLOCK = Blocks.LODESTONE;
+    private static final Block EDGE_BLOCK = Blocks.OAK_LOG;
 
     private final BoardConfig config;
     private final Block[][] board;
@@ -81,23 +84,39 @@ public class Board {
     }
 
     public Text raycastText(HitResult hit) {
-        if (hit.getType() != HitResult.Type.BLOCK) return LiteralText.EMPTY;
+        if (hit.getType() != HitResult.Type.BLOCK) return Text.empty();
 
         var pos = ((BlockHitResult) hit).getBlockPos();
-        if (pos.getY() != 0) return LiteralText.EMPTY;
+        if (pos.getY() != 0) return Text.empty();
 
         var block = block(pos.getX(), pos.getZ());
-        if (block == null) return LiteralText.EMPTY;
-        if (block.equals(DEFAULT_BLOCK)) return LiteralText.EMPTY;
+        if (block == null) return Text.empty();
+        if (block.equals(DEFAULT_BLOCK)) return Text.empty();
 
         return block.getName();
     }
 
     public MapTemplate template() {
         MapTemplate template = MapTemplate.createEmpty();
-        for (BlockPos pos : BlockPos.iterate(0, 0, 0, config.width() - 1, 0, config.height() - 1)) {
+        var width = config.width();
+        var height = config.height();
+
+        for (BlockPos pos : BlockPos.iterate(0, 0, 0, width - 1, 0, height - 1)) {
             template.setBlockState(pos, DEFAULT_BLOCK.getDefaultState());
         }
+
+        var edge = EDGE_BLOCK.getDefaultState();
+        for (var iterable : List.of(
+                BlockPos.iterate(-1, 0, -1, width - 1, 0, -1),
+                BlockPos.iterate(0, 0, height, width, 0, height))) {
+            iterable.forEach(pos -> template.setBlockState(pos, edge.with(PillarBlock.AXIS, Direction.Axis.X)));
+        }
+        for (var iterable : List.of(
+                BlockPos.iterate(-1, 0, 0, -1, 0, height),
+                BlockPos.iterate(width, 0, -1, width, 0, height - 1))) {
+            iterable.forEach(pos -> template.setBlockState(pos, edge.with(PillarBlock.AXIS, Direction.Axis.Z)));
+        }
+
         return template;
     }
 

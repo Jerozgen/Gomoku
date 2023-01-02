@@ -27,7 +27,7 @@ public record GomokuGame(GomokuConfig config, Board board, GameSpace gameSpace, 
         return context.openWithWorld(worldConfig, (activity, world) -> {
             var gameSpace = activity.getGameSpace();
             var namespace = config.statisticBundleNamespace();
-            var statistics = namespace.isEmpty() ? null : gameSpace.getStatistics().bundle(namespace.get());
+            var statistics = namespace.map(value -> gameSpace.getStatistics().bundle(value)).orElse(null);
             var game = new GomokuGame(config, board, gameSpace, world, statistics);
             activity.listen(GameActivityEvents.CREATE, () -> {
                 var waitingPhase = new GomokuWaitingPhase(game);

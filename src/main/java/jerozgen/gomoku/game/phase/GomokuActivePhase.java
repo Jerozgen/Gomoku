@@ -226,8 +226,8 @@ public class GomokuActivePhase extends GomokuPhase {
     private void startTurn(ServerPlayerEntity player) {
         moveStartTime = Util.getMeasuringTimeMs();
         moveSeconds = game.config().moveDuration();
-        player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BELL, SoundCategory.PLAYERS, 1, 1);
-        player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_CHIME, SoundCategory.PLAYERS, 1, 1);
+        player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), SoundCategory.PLAYERS, 1, 1);
+        player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_CHIME.value(), SoundCategory.PLAYERS, 1, 1);
         player.setStackInHand(Hand.OFF_HAND, playerToBlock.get(player).asItem().getDefaultStack());
         updateTimer(player);
     }
@@ -248,7 +248,7 @@ public class GomokuActivePhase extends GomokuPhase {
             } else {
                 moveSeconds = seconds;
                 if (seconds <= 10) {
-                    player.playSound(SoundEvents.UI_BUTTON_CLICK, SoundCategory.PLAYERS, .6f, 1);
+                    player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, .6f, 1);
                     if (seconds == 0) moveSeconds = -1;
                 }
             }
