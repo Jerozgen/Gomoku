@@ -131,6 +131,7 @@ public class GomokuActivePhase extends GomokuPhase {
     private ActionResult onEntityUse(ServerPlayerEntity player, Entity entity, Hand hand, EntityHitResult hit) {
         if (hand != Hand.MAIN_HAND) return ActionResult.PASS;
         if (!player.isSneaking()) return ActionResult.PASS;
+        if (hit == null) return ActionResult.PASS;
         if (hit.getEntity().getType() != EntityType.PLAYER) return ActionResult.PASS;
         if (!queue.contains(player)) return ActionResult.PASS;
         var target = (ServerPlayerEntity) hit.getEntity();
