@@ -1,7 +1,7 @@
 package jerozgen.gomoku.game.phase;
 
 import jerozgen.gomoku.game.GomokuGame;
-import xyz.nucleoid.plasmid.game.GameActivity;
+import xyz.nucleoid.plasmid.api.game.GameActivity;
 
 public abstract class GomokuPhase {
     protected final GomokuGame game;

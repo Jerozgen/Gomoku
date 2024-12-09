@@ -10,20 +10,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.GameMode;
-import xyz.nucleoid.plasmid.game.GameActivity;
-import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
-import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
-import xyz.nucleoid.plasmid.game.player.PlayerOffer;
-import xyz.nucleoid.plasmid.game.player.PlayerOfferResult;
-import xyz.nucleoid.plasmid.game.rule.GameRuleType;
-import xyz.nucleoid.plasmid.game.stats.StatisticKeys;
+import xyz.nucleoid.plasmid.api.game.GameActivity;
+import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
+import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
+import xyz.nucleoid.plasmid.api.game.player.JoinAcceptor;
+import xyz.nucleoid.plasmid.api.game.player.JoinAcceptorResult;
+import xyz.nucleoid.plasmid.api.game.rule.GameRuleType;
+import xyz.nucleoid.plasmid.api.game.stats.StatisticKeys;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.BlockUseEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityUseEvent;
 
@@ -52,7 +52,7 @@ public class GomokuActivePhase extends GomokuPhase {
     protected void setupPhase(GameActivity activity) {
         activity.listen(GameActivityEvents.ENABLE, this::start);
         activity.listen(GameActivityEvents.TICK, this::tick);
-        activity.listen(GamePlayerEvents.OFFER, this::offerPlayer);
+        activity.listen(GamePlayerEvents.ACCEPT, this::acceptPlayer);
         activity.listen(GamePlayerEvents.LEAVE, this::removePlayer);
         activity.listen(BlockUseEvent.EVENT, this::onBlockUse);
         activity.listen(EntityUseEvent.EVENT, this::onEntityUse);
@@ -86,10 +86,9 @@ public class GomokuActivePhase extends GomokuPhase {
         updateTimer(currentPlayer());
     }
 
-    private PlayerOfferResult offerPlayer(PlayerOffer offer) {
-        return offer.accept(game.world(), game.board().spawnPos()).and(() -> {
-            offer.player().changeGameMode(GameMode.SPECTATOR);
-        });
+    private JoinAcceptorResult acceptPlayer(JoinAcceptor offer) {
+        return offer.teleport(game.world(), game.board().spawnPos())
+                .thenRunForEach(player -> player.changeGameMode(GameMode.SPECTATOR));
     }
 
     private void removePlayer(ServerPlayerEntity player) {
@@ -128,14 +127,14 @@ public class GomokuActivePhase extends GomokuPhase {
         return ActionResult.SUCCESS;
     }
 
-    private ActionResult onEntityUse(ServerPlayerEntity player, Entity entity, Hand hand, EntityHitResult hit) {
-        if (hand != Hand.MAIN_HAND) return ActionResult.PASS;
-        if (!player.isSneaking()) return ActionResult.PASS;
-        if (hit == null) return ActionResult.PASS;
-        if (hit.getEntity().getType() != EntityType.PLAYER) return ActionResult.PASS;
-        if (!queue.contains(player)) return ActionResult.PASS;
+    private EventResult onEntityUse(ServerPlayerEntity player, Entity entity, Hand hand, EntityHitResult hit) {
+        if (hand != Hand.MAIN_HAND) return EventResult.PASS;
+        if (!player.isSneaking()) return EventResult.PASS;
+        if (hit == null) return EventResult.PASS;
+        if (hit.getEntity().getType() != EntityType.PLAYER) return EventResult.PASS;
+        if (!queue.contains(player)) return EventResult.PASS;
         var target = (ServerPlayerEntity) hit.getEntity();
-        if (!queue.contains(target)) return ActionResult.PASS;
+        if (!queue.contains(target)) return EventResult.PASS;
 
         // accept request
         var targetRequests = swapRequests.get(target);
@@ -152,7 +151,7 @@ public class GomokuActivePhase extends GomokuPhase {
             playerToBlock.put(player, targetBlock);
             game.gameSpace().getPlayers().sendMessage(GomokuTexts.swap(player, target));
             if (playerIndex == 0 || targetIndex == 0) startTurn(currentPlayer());
-            return ActionResult.SUCCESS;
+            return EventResult.ALLOW;
         }
 
         // send request
@@ -161,10 +160,10 @@ public class GomokuActivePhase extends GomokuPhase {
         if (previousTime == null || Util.getMeasuringTimeMs() - previousTime > REQUEST_DURATION) {
             player.sendMessage(GomokuTexts.swapRequest$toExecutor(target), false);
             target.sendMessage(GomokuTexts.swapRequest$toTarget(player), false);
-            return ActionResult.SUCCESS;
+            return EventResult.ALLOW;
         }
 
-        return ActionResult.PASS;
+        return EventResult.PASS;
     }
 
     private void win(ServerPlayerEntity winner) {
@@ -227,8 +226,8 @@ public class GomokuActivePhase extends GomokuPhase {
     private void startTurn(ServerPlayerEntity player) {
         moveStartTime = Util.getMeasuringTimeMs();
         moveSeconds = game.config().moveDuration();
-        player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), SoundCategory.PLAYERS, 1, 1);
-        player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_CHIME.value(), SoundCategory.PLAYERS, 1, 1);
+        player.playSoundToPlayer(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), SoundCategory.PLAYERS, 1, 1);
+        player.playSoundToPlayer(SoundEvents.BLOCK_NOTE_BLOCK_CHIME.value(), SoundCategory.PLAYERS, 1, 1);
         player.setStackInHand(Hand.OFF_HAND, playerToBlock.get(player).asItem().getDefaultStack());
         updateTimer(player);
     }
@@ -249,7 +248,7 @@ public class GomokuActivePhase extends GomokuPhase {
             } else {
                 moveSeconds = seconds;
                 if (seconds <= 10) {
-                    player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, .6f, 1);
+                    player.playSoundToPlayer(SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, .6f, 1);
                     if (seconds == 0) moveSeconds = -1;
                 }
             }

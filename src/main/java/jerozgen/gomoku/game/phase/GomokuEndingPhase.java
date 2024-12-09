@@ -3,12 +3,12 @@ package jerozgen.gomoku.game.phase;
 import jerozgen.gomoku.game.GomokuGame;
 import jerozgen.gomoku.game.GomokuTexts;
 import net.minecraft.util.Util;
-import xyz.nucleoid.plasmid.game.GameActivity;
-import xyz.nucleoid.plasmid.game.GameCloseReason;
-import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
-import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
-import xyz.nucleoid.plasmid.game.player.PlayerOffer;
-import xyz.nucleoid.plasmid.game.player.PlayerOfferResult;
+import xyz.nucleoid.plasmid.api.game.GameActivity;
+import xyz.nucleoid.plasmid.api.game.GameCloseReason;
+import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
+import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
+import xyz.nucleoid.plasmid.api.game.player.JoinOffer;
+import xyz.nucleoid.plasmid.api.game.player.JoinOfferResult;
 
 public class GomokuEndingPhase extends GomokuPhase {
     public static final long ENDING_DURATION = 10 * 1000;
@@ -26,7 +26,7 @@ public class GomokuEndingPhase extends GomokuPhase {
         activity.listen(GamePlayerEvents.OFFER, this::offerPlayer);
     }
 
-    private PlayerOfferResult offerPlayer(PlayerOffer offer) {
+    private JoinOfferResult offerPlayer(JoinOffer offer) {
         return offer.reject(GomokuTexts.finishedError());
     }
 

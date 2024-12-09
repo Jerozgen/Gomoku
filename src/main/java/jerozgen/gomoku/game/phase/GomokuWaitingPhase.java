@@ -3,16 +3,18 @@ package jerozgen.gomoku.game.phase;
 import jerozgen.gomoku.game.GomokuGame;
 import jerozgen.gomoku.game.GomokuTexts;
 import net.minecraft.world.GameMode;
-import xyz.nucleoid.plasmid.game.GameActivity;
-import xyz.nucleoid.plasmid.game.GameResult;
-import xyz.nucleoid.plasmid.game.common.GameWaitingLobby;
-import xyz.nucleoid.plasmid.game.common.config.PlayerConfig;
-import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
-import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
-import xyz.nucleoid.plasmid.game.player.PlayerOffer;
-import xyz.nucleoid.plasmid.game.player.PlayerOfferResult;
+import xyz.nucleoid.plasmid.api.game.GameActivity;
+import xyz.nucleoid.plasmid.api.game.GameResult;
+import xyz.nucleoid.plasmid.api.game.common.GameWaitingLobby;
+import xyz.nucleoid.plasmid.api.game.common.config.PlayerLimiterConfig;
+import xyz.nucleoid.plasmid.api.game.common.config.WaitingLobbyConfig;
+import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
+import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
+import xyz.nucleoid.plasmid.api.game.player.JoinAcceptor;
+import xyz.nucleoid.plasmid.api.game.player.JoinAcceptorResult;
 
 import java.util.List;
+import java.util.OptionalInt;
 
 public class GomokuWaitingPhase extends GomokuPhase {
     public GomokuWaitingPhase(GomokuGame game) {
@@ -22,23 +24,27 @@ public class GomokuWaitingPhase extends GomokuPhase {
     @Override
     protected void setupPhase(GameActivity activity) {
         var blockCount = game.config().blocks().stream().mapToInt(List::size).sum();
-        var playerConfig = game.config().playerConfig();
-        var newPlayerConfig = new PlayerConfig(
+        var playerConfig = game.config().players();
+        var newPlayerConfig = new WaitingLobbyConfig(
+                new PlayerLimiterConfig(
+                        OptionalInt.of(Math.min(blockCount, playerConfig.playerConfig().maxPlayers().orElse(Integer.MAX_VALUE))),
+                        playerConfig.playerConfig().allowSpectators()
+                ),
                 Math.min(playerConfig.minPlayers(), blockCount),
-                Math.min(playerConfig.maxPlayers(), blockCount),
                 Math.min(playerConfig.thresholdPlayers(), blockCount),
                 playerConfig.countdown());
         GameWaitingLobby.addTo(activity, newPlayerConfig);
 
-        activity.listen(GamePlayerEvents.OFFER, this::offerPlayer);
+        activity.listen(GamePlayerEvents.ACCEPT, this::acceptPlayer);
         activity.listen(GameActivityEvents.REQUEST_START, this::requestStart);
     }
 
-    private PlayerOfferResult offerPlayer(PlayerOffer offer) {
-        return offer.accept(game.world(), game.board().spawnPos()).and(() -> {
-            offer.player().sendMessage(GomokuTexts.description(game), false);
-            offer.player().changeGameMode(GameMode.ADVENTURE);
-        });
+    private JoinAcceptorResult acceptPlayer(JoinAcceptor offer) {
+        return offer.teleport(game.world(), game.board().spawnPos())
+                .thenRunForEach(player -> {
+                    player.sendMessage(GomokuTexts.description(game), false);
+                    player.changeGameMode(GameMode.ADVENTURE);
+                });
     }
 
     private GameResult requestStart() {

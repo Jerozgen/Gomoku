@@ -2,7 +2,7 @@ package jerozgen.gomoku.game;
 
 import jerozgen.gomoku.Gomoku;
 import net.minecraft.util.Identifier;
-import xyz.nucleoid.plasmid.game.stats.StatisticKey;
+import xyz.nucleoid.plasmid.api.game.stats.StatisticKey;
 
 public final class GomokuStatisticKeys {
     // global
@@ -14,7 +14,7 @@ public final class GomokuStatisticKeys {
     public static final StatisticKey<Integer> BLOCKS_PLACED = StatisticKey.intKey(id("blocks_placed"));
 
     private static Identifier id(String path) {
-        return new Identifier(Gomoku.ID, path);
+        return Identifier.of(Gomoku.ID, path);
     }
 
     private GomokuStatisticKeys() {}

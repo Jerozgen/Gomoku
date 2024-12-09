@@ -5,22 +5,23 @@ import jerozgen.gomoku.game.phase.GomokuWaitingPhase;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import xyz.nucleoid.fantasy.RuntimeWorldConfig;
-import xyz.nucleoid.plasmid.game.GameActivity;
-import xyz.nucleoid.plasmid.game.GameOpenContext;
-import xyz.nucleoid.plasmid.game.GameOpenProcedure;
-import xyz.nucleoid.plasmid.game.GameSpace;
-import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
-import xyz.nucleoid.plasmid.game.rule.GameRuleType;
-import xyz.nucleoid.plasmid.game.stats.GameStatisticBundle;
-import xyz.nucleoid.plasmid.game.world.generator.TemplateChunkGenerator;
+import xyz.nucleoid.plasmid.api.game.GameActivity;
+import xyz.nucleoid.plasmid.api.game.GameOpenContext;
+import xyz.nucleoid.plasmid.api.game.GameOpenProcedure;
+import xyz.nucleoid.plasmid.api.game.GameSpace;
+import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
+import xyz.nucleoid.plasmid.api.game.rule.GameRuleType;
+import xyz.nucleoid.plasmid.api.game.stats.GameStatisticBundle;
+import xyz.nucleoid.plasmid.api.game.world.generator.TemplateChunkGenerator;
 
+import java.util.Collections;
 import java.util.function.Consumer;
 
 public record GomokuGame(GomokuConfig config, Board board, GameSpace gameSpace, ServerWorld world,
                          GameStatisticBundle statistics) {
     public static GameOpenProcedure open(GameOpenContext<GomokuConfig> context) {
         var config = context.config();
-        var board = new Board(config.boardConfig());
+        var board = new Board(config.board());
         var template = board.template();
         var generator = new TemplateChunkGenerator(context.server(), template);
         var worldConfig = new RuntimeWorldConfig().setGenerator(generator).setTimeOfDay(6000);
@@ -53,7 +54,7 @@ public record GomokuGame(GomokuConfig config, Board board, GameSpace gameSpace, 
 
     public void spawn(ServerPlayerEntity player) {
         var spawnPos = board.spawnPos();
-        player.teleport(world, spawnPos.x, spawnPos.y, spawnPos.z, player.getYaw(), player.getPitch());
+        player.teleport(world, spawnPos.x, spawnPos.y, spawnPos.z, Collections.emptySet(), player.getYaw(), player.getPitch(), true);
     }
 
     public void stat(Consumer<GameStatisticBundle> consumer) {
